@@ -1,19 +1,8 @@
 import { form } from '$app/server';
+import { emailSignInSchema, emailSignUpSchema } from '$lib/schemas/auth.schema';
 import { auth } from '$lib/server/auth';
+import { redirect } from '@sveltejs/kit';
 import { APIError } from 'better-auth/api';
-import { z } from 'zod';
-
-// Schemas
-export const emailSignUpSchema = z.object({
-	email: z.email(),
-	name: z.string().min(1, 'Name is required'),
-	password: z.string().min(1, 'Password is required')
-});
-
-export const emailSignInSchema = z.object({
-	email: z.email(),
-	password: z.string().min(1, 'Password is required')
-});
 
 // Forms
 export const signUpEmailForm = form(emailSignUpSchema, async ({ email, password, name }) => {
@@ -32,7 +21,7 @@ export const signUpEmailForm = form(emailSignUpSchema, async ({ email, password,
 		return returnError('Unexpected error');
 	}
 
-	return returnSuccess();
+	return redirect(307, '/');
 });
 
 export const signInEmailForm = form(emailSignInSchema, async ({ email, password }) => {
@@ -50,7 +39,7 @@ export const signInEmailForm = form(emailSignInSchema, async ({ email, password 
 		return returnError('Unexpected error');
 	}
 
-	return returnSuccess();
+	return redirect(307, '/');
 });
 
 // Helpers
@@ -58,11 +47,5 @@ function returnError(message: string) {
 	return {
 		success: false,
 		message
-	};
-}
-
-function returnSuccess() {
-	return {
-		success: true
 	};
 }
