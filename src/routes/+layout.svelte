@@ -1,13 +1,18 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { locales, localizeHref } from '$lib/paraglide/runtime';
-	import './layout.css';
+	import type { Pathname } from '$app/types';
 	import favicon from '$lib/assets/favicon.svg';
+	import { Toaster } from '$lib/components/ui/sonner';
+	import { locales, localizeHref } from '$lib/paraglide/runtime';
+	import { ModeWatcher } from 'mode-watcher';
+	import './layout.css';
 
 	let { children } = $props();
 </script>
+
+<Toaster />
+<ModeWatcher />
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 {@render children()}
