@@ -2,7 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import type { Pathname } from '$app/types';
-	import favicon from '$lib/assets/favicon.svg';
+	import icon from '$lib/assets/icon.png';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { locales, localizeHref } from '$lib/paraglide/runtime';
 	import { ModeWatcher } from 'mode-watcher';
@@ -14,7 +14,7 @@
 <Toaster />
 <ModeWatcher />
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head><link rel="icon" href={icon} /></svelte:head>
 {@render children()}
 
 <div style="display:none">

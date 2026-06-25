@@ -6,6 +6,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { placeholderUsers } from '$lib/const/placeholders';
 	import { signUpEmailForm } from '$lib/remote/auth.remote';
+	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 
 	const id = $props.id();
@@ -14,8 +15,8 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="text-2xl">Sign Up</Card.Title>
-		<Card.Description>Enter your details below to create an account</Card.Description>
+		<Card.Title class="text-2xl">Create your account</Card.Title>
+		<Card.Description>Set up access to this gonder instance</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<form {...signUpEmailForm}>
@@ -53,7 +54,10 @@
 						<FieldError>{issue.message}</FieldError>
 					{/each}
 				</Field>
-				<Button type="submit" class="w-full">Sign Up</Button>
+				<Button type="submit" class="w-full">
+					Create Account
+					<ArrowRightIcon />
+				</Button>
 			</FieldGroup>
 		</form>
 

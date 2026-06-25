@@ -7,6 +7,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { placeholderUsers } from '$lib/const/placeholders';
 	import { signInEmailForm } from '$lib/remote/auth.remote';
+	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 
 	const id = $props.id();
@@ -16,8 +17,8 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="text-2xl">Login</Card.Title>
-		<Card.Description>Enter your email below to login to your account</Card.Description>
+		<Card.Title class="text-2xl">Welcome back</Card.Title>
+		<Card.Description>Sign in to your gonder workspace</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<form {...signInEmailForm}>
@@ -37,7 +38,7 @@
 				<Field data-invalid={!!signInEmailForm.fields.password.issues()}>
 					<div class="flex items-center">
 						<FieldLabel for="password-{id}">Password</FieldLabel>
-						<a href="##" class="ms-auto inline-block text-sm underline"> Forgot your password? </a>
+						<a href="##" class="ms-auto inline-block text-sm underline"> Forgot? </a>
 					</div>
 
 					<Input id="password-{id}" {...signInEmailForm.fields.password.as('password')} />
@@ -47,7 +48,10 @@
 						<FieldError>{issue.message}</FieldError>
 					{/each}
 				</Field>
-				<Button type="submit" class="w-full">Login</Button>
+				<Button type="submit" class="w-full"
+					>Sign In
+					<ArrowRightIcon />
+				</Button>
 			</FieldGroup>
 		</form>
 
