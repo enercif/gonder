@@ -12,6 +12,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { createEmptyRules } from '$lib/const/empty';
 	import type { PackageType } from '$lib/const/package-types';
+	import { ruleMeta } from '$lib/const/rule-meta';
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte.js';
 	import { createPackage } from '$lib/remote/package.remote';
 	import { packageCreateSchema } from '$lib/schemas/package.schema';
@@ -29,6 +30,7 @@
 		LinkIcon,
 		LockIcon,
 		PlusIcon,
+		SendIcon,
 		ShieldCheckIcon,
 		UserIcon
 	} from '@lucide/svelte';
@@ -53,7 +55,7 @@
 	let rules = $state(createEmptyRules());
 
 	const activeRules = $derived(Object.values(rules).filter((rule) => rule.enabled));
-	const shareUrl = $derived(`${page.url.origin}/s/${id}`);
+	const shareUrl = $derived(`${page.url.origin}/${type === 'send' ? 's' : 'r'}/${id}`);
 
 	function reset() {
 		id = generateId();
@@ -93,15 +95,17 @@
 	}
 </script>
 
-{#snippet ruleRow(
-	Icon: Component<{ class?: string }>,
-	label: string,
-	ruleId: Rule['id'],
-	control?: Snippet
-)}
+{#snippet ruleRow(Icon: Component<{ class?: string }>, ruleId: Rule['id'], control?: Snippet)}
 	<div class="flex h-16 flex-row items-center gap-2 py-3">
 		<Icon class="size-5 shrink-0" />
-		<span class="mr-10 ml-2 flex-1 shrink-0 text-sm text-nowrap">{label}</span>
+		<div class="text-nowra mr-10 ml-2 flex flex-1 shrink-0 flex-col">
+			<span class="text-sm leading-none font-medium">{ruleMeta[ruleId].title}</span>
+			{#if !rules[ruleId].enabled}
+				<span class="mt-1 text-xs text-muted-foreground">
+					{ruleMeta[ruleId].description}
+				</span>
+			{/if}
+		</div>
 
 		{#if control && rules[ruleId].enabled}
 			<div transition:slide={{ axis: 'x', duration: 300 }}>
@@ -109,7 +113,7 @@
 			</div>
 		{/if}
 
-		<Switch bind:checked={rules[ruleId].enabled} aria-label={label} />
+		<Switch bind:checked={rules[ruleId].enabled} aria-label={ruleMeta[ruleId].title} />
 	</div>
 {/snippet}
 
@@ -127,8 +131,20 @@
 		<div class="flex size-full flex-col gap-4 overflow-y-scroll px-4 pb-4">
 			<Tabs.Root value={type} onValueChange={(value) => (type = value as PackageType)}>
 				<Tabs.List class="w-full">
-					<Tabs.Trigger value="send">Send</Tabs.Trigger>
-					<Tabs.Trigger value="receive">Receive</Tabs.Trigger>
+					<Tabs.Trigger
+						value="send"
+						class="data-active:border-blue-600! dark:data-active:border-blue-400"
+					>
+						<SendIcon class="size-4 text-blue-600 dark:text-blue-400" />
+						Send
+					</Tabs.Trigger>
+					<Tabs.Trigger
+						value="receive"
+						class="data-active:border-purple-600! dark:data-active:border-purple-400"
+					>
+						<SendIcon class="size-4 rotate-180 text-purple-600 dark:text-purple-400" />
+						Receive
+					</Tabs.Trigger>
 				</Tabs.List>
 			</Tabs.Root>
 
@@ -164,24 +180,24 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="flex flex-col divide-y divide-border">
-						{@render ruleRow(DownloadIcon, 'Download Limit', 'max_download', maxDownloadControl)}
+						{@render ruleRow(DownloadIcon, 'max_download', maxDownloadControl)}
 						{@render ruleRow(
 							FileStackIcon,
-							'Max file count',
+
 							'max_file_count',
 							maxFileCountControl
 						)}
-						{@render ruleRow(ClockIcon, 'Expiration Date', 'expiration', expirationControl)}
-						{@render ruleRow(LockIcon, 'Password protection', 'password', passwordControl)}
-						{@render ruleRow(FileScanIcon, 'Max file size', 'max_file_size', fileSizeControl)}
+						{@render ruleRow(ClockIcon, 'expiration', expirationControl)}
+						{@render ruleRow(LockIcon, 'password', passwordControl)}
+						{@render ruleRow(FileScanIcon, 'max_file_size', fileSizeControl)}
 						{@render ruleRow(
 							HardDriveIcon,
-							'Max package size',
+
 							'max_package_size',
 							packageSizeControl
 						)}
-						{@render ruleRow(FlameIcon, 'Automatic Purge', 'automatic_purge')}
-						{@render ruleRow(UserIcon, 'Require Credentials', 'require_credentials')}
+						{@render ruleRow(FlameIcon, 'automatic_purge')}
+						{@render ruleRow(UserIcon, 'require_credentials')}
 					</div>
 				</Card.Content>
 			</Card.Root>
@@ -218,13 +234,16 @@
 						<Separator />
 
 						<span>Rules</span>
-						<div class="flex flex-col gap-2">
+						<div class="flex flex-col gap-3">
 							{#if activeRules.length > 0}
 								{#each activeRules as rule (rule.id)}
-									<span>{rule.id}</span>
+									<div class="flex flex-row items-start gap-2">
+										<CheckIcon class="mt-0.5 size-4 shrink-0 text-emerald-500" />
+										<span class="text-sm leading-none font-medium">{ruleMeta[rule.id].title}</span>
+									</div>
 								{/each}
 							{:else}
-								<span>No active rules</span>
+								<span class="text-sm text-muted-foreground">No active rules</span>
 							{/if}
 						</div>
 					</div>
