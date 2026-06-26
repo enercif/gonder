@@ -4,12 +4,14 @@
 	import { page } from '$app/state';
 	import src from '$lib/assets/icon.png';
 	import { authClient } from '$lib/auth-client';
+	import NewPackage from '$lib/components/new-package.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { navigation } from '$lib/const/navigation';
-	import { BellIcon, PlusIcon } from '@lucide/svelte';
+	import { setLocale } from '$lib/paraglide/runtime';
+	import { BellIcon, LanguagesIcon } from '@lucide/svelte';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import MoonIcon from '@lucide/svelte/icons/moon';
@@ -41,7 +43,7 @@
 	}
 </script>
 
-<Sidebar.Provider>
+<Sidebar.Provider class="h-screen max-h-screen">
 	<Sidebar.Root collapsible="icon">
 		<Sidebar.Header>
 			<Sidebar.Menu>
@@ -50,7 +52,7 @@
 						<DropdownMenu.Trigger>
 							{#snippet child({ props })}
 								<Sidebar.MenuButton {...props} size="lg">
-									<img {src} alt="Gonder Logo" class="size-8" />
+									<img {src} alt="Gonder Logo" class="size-8 rounded-md" />
 									<span class="truncate font-medium">gonder</span>
 									<ChevronsUpDownIcon class="ml-auto" />
 								</Sidebar.MenuButton>
@@ -70,6 +72,17 @@
 								<SettingsIcon />
 								Settings
 							</DropdownMenu.Item>
+
+							<DropdownMenu.Sub>
+								<DropdownMenu.SubTrigger>
+									<LanguagesIcon />
+									Locale
+								</DropdownMenu.SubTrigger>
+								<DropdownMenu.SubContent>
+									<DropdownMenu.Item onclick={() => setLocale('de')}>German</DropdownMenu.Item>
+									<DropdownMenu.Item onclick={() => setLocale('en')}>English</DropdownMenu.Item>
+								</DropdownMenu.SubContent>
+							</DropdownMenu.Sub>
 
 							<DropdownMenu.Sub>
 								<DropdownMenu.SubTrigger>
@@ -124,9 +137,9 @@
 			{/each}
 		</Sidebar.Content>
 	</Sidebar.Root>
-	<main class="w-full">
+	<main class="flex h-svh w-full min-w-0 flex-col overflow-hidden">
 		<div
-			class="flex w-full flex-row items-center gap-4 border-b border-b-border bg-background px-4 py-2.5"
+			class="flex w-full shrink-0 flex-row items-center gap-4 border-b border-b-border bg-background px-4 py-2.5"
 		>
 			<Sidebar.Trigger />
 
@@ -151,14 +164,10 @@
 				<Button size="icon" variant="outline">
 					<BellIcon />
 				</Button>
-
-				<Button>
-					<PlusIcon />
-					New Package
-				</Button>
+				<NewPackage />
 			</div>
 		</div>
-		<div class="bg-background p-4">
+		<div class="flex min-h-0 flex-1 flex-col overflow-y-auto bg-background p-6">
 			{@render children?.()}
 		</div>
 	</main>
