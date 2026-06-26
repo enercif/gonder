@@ -1,14 +1,15 @@
-import { form, getRequestEvent, query } from '$app/server';
+import { command, getRequestEvent, query } from '$app/server';
 import { packageCreateSchema, packageSchema } from '$lib/schemas/package.schema';
 import { db } from '$lib/server/db';
 import { packageTable } from '$lib/server/db/schema';
 import { getLocalTimeZone, now } from '@internationalized/date';
+import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export const getMyPackages = query(async () => {
 	const event = getRequestEvent();
 	if (!event.locals.user) {
-		throw new Error('User not authenticated');
+		error(401, 'User not authenticated');
 	}
 
 	const packages = await db.query.packageTable.findMany({
@@ -18,24 +19,26 @@ export const getMyPackages = query(async () => {
 	return packageSchema.array().parse(packages);
 });
 
-export const createPackageForm = form(packageCreateSchema, async (packageCreate) => {
-	console.log('packageCreate', packageCreate);
-
+export const createPackage = command(packageCreateSchema, async (input) => {
 	const event = getRequestEvent();
 	if (!event.locals.user) {
-		throw new Error('User not authenticated');
+		error(401, 'User not authenticated');
 	}
+
+	const url = `${event.url.origin}/s/${input.id}`;
 
 	const [newPackage] = await db
 		.insert(packageTable)
 		.values({
-			...packageCreate,
-			id: crypto.randomUUID(),
+			...input,
+			url,
 			userId: event.locals.user.id,
 			status: 'active',
 			createdAt: now(getLocalTimeZone()).toAbsoluteString()
 		})
 		.returning();
+
+	await getMyPackages().refresh();
 
 	return packageSchema.parse(newPackage);
 });
