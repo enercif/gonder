@@ -11,6 +11,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { navigation } from '$lib/const/navigation';
 	import { setLocale } from '$lib/paraglide/runtime';
+	import { breadcrumbDetailState } from '$lib/state/breadcrumb-detail.state.svelte';
 	import { BellIcon, LanguagesIcon } from '@lucide/svelte';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
@@ -150,12 +151,32 @@
 							<Breadcrumb.Link>{currentNavGroup.label}</Breadcrumb.Link>
 						</Breadcrumb.Item>
 						<Breadcrumb.Separator />
-						<Breadcrumb.Item>
-							<Breadcrumb.Page class="flex items-center gap-1">
-								<currentNavItem.icon class="size-4" />
-								{currentNavItem.label}
-							</Breadcrumb.Page>
-						</Breadcrumb.Item>
+
+						{#if breadcrumbDetailState.current}
+							<Breadcrumb.Item>
+								<Breadcrumb.Link
+									href={currentNavGroup.path + currentNavItem.href}
+									class="flex items-center gap-1"
+								>
+									<currentNavItem.icon class="size-4" />
+									{currentNavItem.label}
+								</Breadcrumb.Link>
+							</Breadcrumb.Item>
+							<Breadcrumb.Separator />
+
+							<Breadcrumb.Item>
+								<Breadcrumb.Page class="flex items-center gap-1">
+									{breadcrumbDetailState.current}
+								</Breadcrumb.Page>
+							</Breadcrumb.Item>
+						{:else}
+							<Breadcrumb.Item>
+								<Breadcrumb.Page class="flex items-center gap-1">
+									<currentNavItem.icon class="size-4" />
+									{currentNavItem.label}
+								</Breadcrumb.Page>
+							</Breadcrumb.Item>
+						{/if}
 					</Breadcrumb.List>
 				</Breadcrumb.Root>
 			{/if}

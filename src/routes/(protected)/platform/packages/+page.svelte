@@ -1,15 +1,24 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { packageNameSnippet } from '$lib/components/snippets/package-name.snippet.svelte';
 	import Rules from '$lib/components/snippets/rules.snippet.svelte';
 	import { statusBadgeSnippet } from '$lib/components/snippets/status-badge.snippet.svelte';
 	import { typeBadgeSnippet } from '$lib/components/snippets/type-badge.snippet.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { getMyPackages } from '$lib/remote/package.remote';
-	import { EllipsisVerticalIcon, HardDriveIcon } from '@lucide/svelte';
+	import {
+		BanIcon,
+		EllipsisVerticalIcon,
+		HardDriveIcon,
+		PauseIcon,
+		SquareArrowOutUpRightIcon
+	} from '@lucide/svelte';
 
 	const packages = await getMyPackages();
 	const activePackagesCount = packages.filter((pack) => pack.status === 'active').length;
@@ -69,9 +78,41 @@
 								<Table.Cell><Rules rules={pack.rules} /></Table.Cell>
 								<Table.Cell>{@render statusBadgeSnippet(pack.status)}</Table.Cell>
 								<Table.Cell>
-									<Button size="icon" variant="ghost">
-										<EllipsisVerticalIcon />
-									</Button>
+									<DropdownMenu.Root>
+										<DropdownMenu.Trigger>
+											{#snippet child({ props })}
+												<Button {...props} size="icon" variant="ghost">
+													<EllipsisVerticalIcon />
+												</Button>
+											{/snippet}
+										</DropdownMenu.Trigger>
+										<DropdownMenu.Content>
+											<DropdownMenu.Group>
+												<DropdownMenu.Item
+													class="flex flex-row items-center justify-between"
+													onclick={() =>
+														goto(
+															resolve('/(protected)/platform/packages/[id]', {
+																id: pack.id
+															})
+														)}
+												>
+													Details
+													<SquareArrowOutUpRightIcon />
+												</DropdownMenu.Item>
+
+												<DropdownMenu.Item class="flex flex-row items-center justify-between">
+													Deactivate
+													<PauseIcon />
+												</DropdownMenu.Item>
+
+												<DropdownMenu.Item class="flex flex-row items-center justify-between">
+													Expire
+													<BanIcon />
+												</DropdownMenu.Item>
+											</DropdownMenu.Group>
+										</DropdownMenu.Content>
+									</DropdownMenu.Root>
 								</Table.Cell>
 							</Table.Row>
 						{/each}
