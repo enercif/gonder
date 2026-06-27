@@ -181,21 +181,11 @@
 				<Card.Content>
 					<div class="flex flex-col divide-y divide-border">
 						{@render ruleRow(DownloadIcon, 'max_download', maxDownloadControl)}
-						{@render ruleRow(
-							FileStackIcon,
-
-							'max_file_count',
-							maxFileCountControl
-						)}
+						{@render ruleRow(FileStackIcon, 'max_file_count', maxFileCountControl)}
 						{@render ruleRow(ClockIcon, 'expiration', expirationControl)}
 						{@render ruleRow(LockIcon, 'password', passwordControl)}
 						{@render ruleRow(FileScanIcon, 'max_file_size', fileSizeControl)}
-						{@render ruleRow(
-							HardDriveIcon,
-
-							'max_package_size',
-							packageSizeControl
-						)}
+						{@render ruleRow(HardDriveIcon, 'max_package_size', packageSizeControl)}
 						{@render ruleRow(FlameIcon, 'automatic_purge')}
 						{@render ruleRow(UserIcon, 'require_credentials')}
 					</div>
