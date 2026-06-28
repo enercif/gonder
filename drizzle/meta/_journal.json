@@ -15,6 +15,13 @@
       "when": 1782492873354,
       "tag": "0001_reflective_omega_sentinel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1782588828133,
+      "tag": "0002_lame_wiccan",
+      "breakpoints": true
     }
   ]
 }

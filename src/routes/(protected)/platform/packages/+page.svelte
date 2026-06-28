@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { packageNameSnippet } from '$lib/components/snippets/package-name.snippet.svelte';
-	import Rules from '$lib/components/snippets/rules.snippet.svelte';
+	import { rulesSnippet } from '$lib/components/snippets/rules.snippet.svelte';
 	import { statusBadgeSnippet } from '$lib/components/snippets/status-badge.snippet.svelte';
 	import { typeBadgeSnippet } from '$lib/components/snippets/type-badge.snippet.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -11,7 +11,9 @@
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { getMyFiles } from '$lib/remote/file.remote';
 	import { getMyPackages } from '$lib/remote/package.remote';
+	import { formatBytes } from '$lib/utils';
 	import {
 		BanIcon,
 		EllipsisVerticalIcon,
@@ -20,8 +22,10 @@
 		SquareArrowOutUpRightIcon
 	} from '@lucide/svelte';
 
-	const packages = await getMyPackages();
-	const activePackagesCount = packages.filter((pack) => pack.status === 'active').length;
+	const packages = $derived(await getMyPackages());
+	const files = $derived(await getMyFiles());
+	const usedBytes = $derived(files.reduce((sum, file) => sum + file.size, 0));
+	const activePackagesCount = $derived(packages.filter((pack) => pack.status === 'active').length);
 </script>
 
 <div class="flex min-h-0 flex-1 flex-col gap-6">
@@ -33,11 +37,11 @@
 			</div>
 
 			<div class="flex flex-row items-baseline gap-1">
-				<span class="text-2xl font-semibold">12</span>
-				<span class="text-muted-foreground">/50 GB</span>
+				<span class="text-2xl font-semibold">{formatBytes(usedBytes)}</span>
+				<span class="text-muted-foreground">/50 MB</span>
 			</div>
 
-			<Progress value={12} max={50} class="h-2" />
+			<Progress value={usedBytes} max={50_000_000} class="h-2" />
 		</Card.Content>
 	</Card.Root>
 
@@ -72,10 +76,14 @@
 					</Table.Header>
 					<Table.Body>
 						{#each packages as pack (pack.id)}
-							<Table.Row>
+							<Table.Row
+								class="cursor-pointer"
+								onclick={() =>
+									goto(resolve('/(protected)/platform/packages/[id]', { id: pack.id }))}
+							>
 								<Table.Cell>{@render packageNameSnippet(pack.name, pack.url)}</Table.Cell>
 								<Table.Cell>{@render typeBadgeSnippet(pack.type)}</Table.Cell>
-								<Table.Cell><Rules rules={pack.rules} /></Table.Cell>
+								<Table.Cell>{@render rulesSnippet(pack.rules)}</Table.Cell>
 								<Table.Cell>{@render statusBadgeSnippet(pack.status)}</Table.Cell>
 								<Table.Cell>
 									<DropdownMenu.Root>

@@ -11,7 +11,7 @@
 	let { children } = $props();
 </script>
 
-<Toaster />
+<Toaster richColors position="bottom-left" />
 <ModeWatcher />
 
 <svelte:head><link rel="icon" href={icon} /></svelte:head>

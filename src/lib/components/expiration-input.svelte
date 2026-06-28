@@ -39,7 +39,7 @@
 </script>
 
 <InputGroup.Root class="w-fit">
-	<InputGroup.Addon align="inline-start" class="text-primary-foreground">
+	<InputGroup.Addon align="inline-start" class="text-foreground">
 		<Popover.Root bind:open>
 			<Popover.Trigger>
 				{#snippet child({ props })}
@@ -63,7 +63,7 @@
 			</Popover.Content>
 		</Popover.Root>
 	</InputGroup.Addon>
-	<InputGroup.Addon align="inline-end" class="text-primary-foreground">
+	<InputGroup.Addon align="inline-end" class="text-foreground">
 		<TimeField {locale} bind:value={timeValue} />
 	</InputGroup.Addon>
 </InputGroup.Root>

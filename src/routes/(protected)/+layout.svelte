@@ -19,9 +19,12 @@
 	import SettingsIcon from '@lucide/svelte/icons/settings';
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import { resetMode, setMode } from 'mode-watcher';
+	import { PersistedState } from 'runed';
 	import type { LayoutProps } from './$types';
 
 	let { children, data }: LayoutProps = $props();
+
+	const persistedSidebarState = new PersistedState('sidebar', false);
 
 	const currentRoute = $derived(page.route.id?.split('/').slice(2) ?? []);
 
@@ -44,7 +47,7 @@
 	}
 </script>
 
-<Sidebar.Provider class="h-screen max-h-screen">
+<Sidebar.Provider class="h-screen max-h-screen" bind:open={persistedSidebarState.current}>
 	<Sidebar.Root collapsible="icon">
 		<Sidebar.Header>
 			<Sidebar.Menu>

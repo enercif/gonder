@@ -12,8 +12,8 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { createEmptyRules } from '$lib/const/empty';
 	import type { PackageType } from '$lib/const/package-types';
-	import { ruleMeta } from '$lib/const/rule-meta';
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte.js';
+	import { ruleMeta } from '$lib/meta/rule-meta';
 	import { createPackage } from '$lib/remote/package.remote';
 	import { packageCreateSchema } from '$lib/schemas/package.schema';
 	import type { Rule } from '$lib/schemas/rule.schema';

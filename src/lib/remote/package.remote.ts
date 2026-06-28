@@ -3,6 +3,7 @@ import { PACKAGE_TYPES } from '$lib/const/package-types';
 import { packageCreateSchema, packageSchema } from '$lib/schemas/package.schema';
 import { db } from '$lib/server/db';
 import { packageTable } from '$lib/server/db/schema';
+import { logActivity } from '$lib/server/server-utils';
 import { getLocalTimeZone, now } from '@internationalized/date';
 import { error } from '@sveltejs/kit';
 import { and, eq } from 'drizzle-orm';
@@ -74,9 +75,11 @@ export const createPackage = command(packageCreateSchema, async (input) => {
 			url,
 			userId: user.id,
 			status: 'active',
-			createdAt: now(getLocalTimeZone()).toAbsoluteString()
+			createdAt: now(getLocalTimeZone()).toString()
 		})
 		.returning();
+
+	await logActivity(newPackage.id, 'created', `Package "${newPackage.name}" created`);
 
 	await getMyPackages().refresh();
 
